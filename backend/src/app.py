@@ -2,20 +2,18 @@ from flask import Flask, request, jsonify
 from flask_pymongo import ObjectId
 from flask_cors import CORS, cross_origin
 from pymongo import MongoClient
-from vars import USERNAME, PASSWORD
 
 app = Flask(__name__)
-
-client = MongoClient(f'mongodb://{USERNAME}:{PASSWORD}@crudreactdb-shard-00-00.qjtmr.mongodb.net:27017,crudreactdb-shard-00-01.qjtmr.mongodb.net:27017,crudreactdb-shard-00-02.qjtmr.mongodb.net:27017/CrudReactDB?ssl=true&replicaSet=atlas-332f90-shard-0&authSource=admin&retryWrites=true&w=majority')
-app.config['MONGODB_SETTINGS'] = {
-    'db': client,
-    'host': 'localhost',
-    'port': 27017
-}
 CORS(app)
-db = client.CrudReactDB
-users = db.users
 
+conn = "mongodb://localhost:27017"
+client = MongoClient(conn, serverSelectionTimeoutMS=5000)   # set a 5-second connection timeout
+try:
+    db = client.RESTAPIDB
+    users = db.users
+    print("Connect with the server.", client.server_info)
+except Exception:
+    print("Unable to connect to the server.")
 
 @app.route('/users', methods=['POST'])
 def createUser():
