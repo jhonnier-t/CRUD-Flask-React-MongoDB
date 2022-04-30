@@ -2,7 +2,7 @@ import React, {useState} from "react"
 
 
 const API = process.env.REACT_APP_API;
-
+console.log("---------------------------------------"+API)
 
 export const Users = () => {
 
@@ -20,8 +20,7 @@ export const Users = () => {
         headers.append('Accept', 'application/json');
         
       
-        const response = await fetch(API+"/users", {
-            mode: 'no-cors',
+        const response = await fetch("http://127.0.0.1:5000"+"/users", {
             method: 'POST', 
             headers: headers,
             body: JSON.stringify ({
