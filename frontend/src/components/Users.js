@@ -3,7 +3,6 @@ import React, {useState} from "react"
 
 const API = process.env.REACT_APP_API;
 
-
 export const Users = () => {
 
     const [name, setName]= useState('')
@@ -19,7 +18,7 @@ export const Users = () => {
         headers.append('Content-Type', 'application/json');
         headers.append('Accept', 'application/json');
 
-        const response = await fetch(API+"/users", {
+        const response = await fetch(`${API}/users`, {
             method: 'POST', 
             headers: headers,
             body: JSON.stringify ({
