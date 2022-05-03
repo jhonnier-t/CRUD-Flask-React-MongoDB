@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
 
 
 const API = process.env.REACT_APP_API;
@@ -9,6 +9,7 @@ export const Users = () => {
     const [email, setEmail]= useState('')
     const [password, setPassword]= useState('')
 
+    const [users, setUsers] = useState([])
     
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -31,11 +32,21 @@ export const Users = () => {
         console.log(data)
     }
 
+    const getUsers = async () => {
+        const response = await fetch(`${API}/users`)
+        const data = await response.json()
+        setUsers(data)
+    }
+
+    useEffect(() => {
+        getUsers();
+    }, [])
+
     return (
         <div className="row">
             <div className="col-md-4">
                 <form onSubmit={handleSubmit} className="card card-body">
-                    <div className="form-group">
+                    <div className="form-group p-1">
                         <input 
                             type="text" 
                             onChange =  {e => setName(e.target.value)}
@@ -45,7 +56,7 @@ export const Users = () => {
                             autoFocus
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group p-1">
                         <input 
                             type="email" 
                             onChange={e => setEmail(e.target.value)}
@@ -54,7 +65,7 @@ export const Users = () => {
                             placeholder="Email"
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group p-1">
                         <input 
                             type="password" 
                             onChange={e => setPassword(e.target.value)}
@@ -63,13 +74,39 @@ export const Users = () => {
                             placeholder="Password"
                         />
                     </div>
-                    <botton onClick={handleSubmit}  className="btn btn-primary btn-block" >
+                    <button onClick={handleSubmit}  className="btn btn-primary btn-block" >
                             Create
-                    </botton>
+                    </button>
                 </form>
             </div>
-            <div className="col md-8">
-
+            <div className="col-md-6">
+                <table className="table table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Operations</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map(user => (
+                            <tr key={user._id}>
+                                <td>{user.name}</td>
+                                <td>{user.email}</td>
+                                <td>{user.password}</td>
+                                <td className="card card-body">
+                                    <button className="btn btn-secondary btn-sm btn-block">
+                                        Edit
+                                    </button>
+                                    <button className="btn btn-danger btn-sm btn-block">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     )
