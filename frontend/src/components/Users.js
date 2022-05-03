@@ -29,6 +29,7 @@ export const Users = () => {
             })
         })
         const data = await response.json();
+        await getUsers();
         console.log(data)
     }
 
@@ -41,6 +42,26 @@ export const Users = () => {
     useEffect(() => {
         getUsers();
     }, [])
+
+    const deleteUser = async (id) => {
+        const userResponse = window.confirm('Are you sure you want to delete it?')
+        if (userResponse){
+            const response = await fetch(`${API}/users/${id}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json()
+            await getUsers();
+        }
+    }
+
+    const updateUser = async (id) => {
+        const response = await fetch(`${API}/users/${id}`, {
+            method: 'PUT'
+        });
+        const data = await response.json()
+        console.log(data)
+    }
+    
 
     return (
         <div className="row">
@@ -96,10 +117,15 @@ export const Users = () => {
                                 <td>{user.email}</td>
                                 <td>{user.password}</td>
                                 <td className="card card-body">
-                                    <button className="btn btn-secondary btn-sm btn-block">
-                                        Edit
+                                    <button 
+                                    className="btn btn-secondary btn-sm btn-block"
+                                    onClick={() => updateUser(user._id)}>
+                                        Update
                                     </button>
-                                    <button className="btn btn-danger btn-sm btn-block">
+                                    <button 
+                                    className="btn btn-danger btn-sm btn-block"
+                                    onClick={() => deleteUser(user._id)}
+                                    >
                                         Delete
                                     </button>
                                 </td>
