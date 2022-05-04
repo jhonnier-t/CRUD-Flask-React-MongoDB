@@ -10,27 +10,50 @@ export const Users = () => {
     const [password, setPassword]= useState('')
 
     const [users, setUsers] = useState([])
+
+    const [updating, setUpdating] = useState(false)
+    const [id, setId]= useState('')
     
     const handleSubmit = async (e) => {
+
         e.preventDefault();
-        
-        let headers = new Headers();
+        if (!updating){
+            let headers = new Headers();
+            headers.append('Content-Type', 'application/json');
+            headers.append('Accept', 'application/json');
 
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept', 'application/json');
-
-        const response = await fetch(`${API}/users`, {
-            method: 'POST', 
-            headers: headers,
-            body: JSON.stringify ({
-                'name': name,
-                'email':email,
-                'password':password
+            const response = await fetch(`${API}/users`, {
+                method: 'POST', 
+                headers: headers,
+                body: JSON.stringify ({
+                    'name': name,
+                    'email':email,
+                    'password':password
+                })
             })
-        })
-        const data = await response.json();
+            const data = await response.json();
+            console.log(data)
+        }else{
+            const response = await fetch(`${API}/users/${id}`, {
+                method: 'PUT', 
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify ({
+                    name, 
+                    email,
+                    password
+                })
+            })
+            const data = await response.json();
+            console.log(data)
+
+        }
+        
         await getUsers();
-        console.log(data)
+
+        setName('');
+        setEmail('');
+        setPassword('');
+        
     }
 
     const getUsers = async () => {
@@ -49,16 +72,23 @@ export const Users = () => {
             const response = await fetch(`${API}/users/${id}`, {
                 method: 'DELETE'
             });
-            const data = await response.json()
+            const data = await response.json();
+            console.log(data)
             await getUsers();
         }
     }
 
     const updateUser = async (id) => {
         const response = await fetch(`${API}/users/${id}`, {
-            method: 'PUT'
+            method: 'GET'
         });
         const data = await response.json()
+        setUpdating(true);
+        setId(id);
+        
+        setName(data.name)
+        setEmail(data.email)
+        setPassword(data.password)
         console.log(data)
     }
     
@@ -95,7 +125,7 @@ export const Users = () => {
                             placeholder="Password"
                         />
                     </div>
-                    <button onClick={handleSubmit}  className="btn btn-primary btn-block" >
+                    <button onChange={handleSubmit}  className="btn btn-primary btn-block" >
                             Create
                     </button>
                 </form>
