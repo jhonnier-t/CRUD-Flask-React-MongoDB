@@ -11,43 +11,28 @@ export const Users = () => {
 
     const [users, setUsers] = useState([])
 
-    const [updating, setUpdating] = useState(false)
     const [id, setId]= useState('')
     
     const handleSubmit = async (e) => {
-
+      
         e.preventDefault();
-        if (!updating){
-            let headers = new Headers();
-            headers.append('Content-Type', 'application/json');
-            headers.append('Accept', 'application/json');
 
-            const response = await fetch(`${API}/users`, {
-                method: 'POST', 
-                headers: headers,
-                body: JSON.stringify ({
-                    'name': name,
-                    'email':email,
-                    'password':password
-                })
-            })
-            const data = await response.json();
-            console.log(data)
-        }else{
-            const response = await fetch(`${API}/users/${id}`, {
-                method: 'PUT', 
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify ({
-                    name, 
-                    email,
-                    password
-                })
-            })
-            const data = await response.json();
-            console.log(data)
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        headers.append('Accept', 'application/json');
 
-        }
-        
+        const response = await fetch(`${API}/users`, {
+            method: 'POST', 
+            headers: headers,
+            body: JSON.stringify ({
+                'name': name,
+                'email':email,
+                'password':password
+            })
+        })
+        const data = await response.json();
+        console.log(data)
+
         await getUsers();
 
         setName('');
@@ -80,16 +65,14 @@ export const Users = () => {
 
     const updateUser = async (id) => {
         const response = await fetch(`${API}/users/${id}`, {
-            method: 'GET'
-        });
-        const data = await response.json()
-        setUpdating(true);
-        setId(id);
-        
-        setName(data.name)
-        setEmail(data.email)
-        setPassword(data.password)
-        console.log(data)
+            method: 'PUT', 
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify ({
+                name,
+                email,
+                password
+            })
+        })
     }
     
 
@@ -128,6 +111,7 @@ export const Users = () => {
                     <button onChange={handleSubmit}  className="btn btn-primary btn-block" >
                             Create
                     </button>
+                    
                 </form>
             </div>
             <div className="col-md-6">
