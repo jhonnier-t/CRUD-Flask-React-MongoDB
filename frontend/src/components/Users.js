@@ -11,28 +11,44 @@ export const Users = () => {
 
     const [users, setUsers] = useState([])
 
-    const [id, setId]= useState('')
+    const [id, setId] = useState('')
+    const [editing, setEditing]= useState(false)
     
     const handleSubmit = async (e) => {
       
         e.preventDefault();
 
-        let headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-        headers.append('Accept', 'application/json');
+        if(!editing){
 
         const response = await fetch(`${API}/users`, {
             method: 'POST', 
-            headers: headers,
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify ({
-                'name': name,
-                'email':email,
-                'password':password
+                name, 
+                email, 
+                password
             })
         })
         const data = await response.json();
         console.log(data)
-
+        }else{
+            const response = await fetch(`${API}/users/${id}`,{
+            method: 'PUT',
+            headers: {
+                'Content-type':'application/json'
+            },
+            body: JSON.stringify({
+                name,
+                email,
+                password
+            })
+        })
+        const data = await response.json();
+        console.log(data)
+        }
+        
         await getUsers();
 
         setName('');
@@ -64,15 +80,14 @@ export const Users = () => {
     }
 
     const updateUser = async (id) => {
-        const response = await fetch(`${API}/users/${id}`, {
-            method: 'PUT', 
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify ({
-                name,
-                email,
-                password
-            })
-        })
+        const response = await fetch(`${API}/users/${id}`)
+        const data = await response.json()
+
+        setEditing(true)
+        setId(id)
+        setName(data.name)
+        setEmail(data.email)
+        setPassword(data.password)
     }
     
 
